@@ -29,7 +29,7 @@ def check_mikrotik_sfp(item, params, info):
     volt = 0.0
     bias = 0
     tx = 0.0
-    rx = 0.0
+    rx = -40.0
 
     for line in info:
         if line[1] == item:
@@ -42,6 +42,8 @@ def check_mikrotik_sfp(item, params, info):
             bias = line[5]
             tx = float(line[6])/1000.0
             rx = float(line[7])/1000.0
+            if (rx < -33.5) or (rx == 0.0):
+                rx = -40.0
             infotext = "%s (SFP Name: %s, SFP Wave Length: %.2f nm, SFP Temp: %s st.C, SFP Supply Voltage: %.2f V, SFP Bias Current: %s mA, SFP Tx: %.2f dB, SFP Rx: %.2f dB)" % \
                        (sfp, sfp, wave, temp, volt, bias, tx, rx)
 
@@ -55,8 +57,11 @@ def check_mikrotik_sfp(item, params, info):
 
                 perfdata.append(('Rx_Power', rx, warn, crit))
 
+                if (rx > 0.0):
+                    return (2, "CRIT - sfp Rx power too HIGH !!!" + infotext, perfdata)
+
                 if (rx < crit or rx == "" or rx == 0) and (crit != 0):
-                    return (2, "CRIT - sftp Rx power Error !!! " + infotext, perfdata)
+                    return (2, "CRIT - sfp Rx power Error !!! " + infotext, perfdata)
                 if (rx < warn) and (warn != 0):
                     return (1, "WARN - sfp Rx power too low " + infotext, perfdata)
                 if rx >= warn:
