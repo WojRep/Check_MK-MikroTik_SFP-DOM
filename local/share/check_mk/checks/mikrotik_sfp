@@ -30,6 +30,7 @@ def check_mikrotik_sfp(item, params, info):
     bias = 0
     tx = 0.0
     rx = -40.0
+    vendor = "?"
 
     for line in info:
         if line[1] == item:
@@ -44,8 +45,13 @@ def check_mikrotik_sfp(item, params, info):
             rx = float(line[7])/1000.0
             if (rx < -33.5) or (rx == 0.0):
                 rx = -40.0
-            infotext = "%s (SFP Name: %s, SFP Wave Length: %.2f nm, SFP Temp: %s st.C, SFP Supply Voltage: %.2f V, SFP Bias Current: %s mA, SFP Tx: %.2f dB, SFP Rx: %.2f dB)" % \
-                       (sfp, sfp, wave, temp, volt, bias, tx, rx)
+            optical_tx_fault = int(line[8])
+            vendor = str(line[9])
+            if (vendor is None) or (vendor == ""):
+                vendor = "?"
+
+            infotext = "%s (SFP Name: %s, Vendor: %s, SFP Wave Length: %.2f nm, SFP Temp: %s st.C, SFP Supply Voltage: %.2f V, SFP Bias Current: %s mA, SFP Tx: %.2f dB, SFP Rx: %.2f dB)" % \
+                       (sfp, sfp, vendor, wave, temp, volt, bias, tx, rx)
 
             perfdata.append(('Temp', temp))
             perfdata.append(('Tx_power', tx))
@@ -57,7 +63,7 @@ def check_mikrotik_sfp(item, params, info):
 
                 perfdata.append(('Rx_Power', rx, warn, crit))
 
-                if (rx > 0.0):
+                if (rx > 0.0) and (optical_tx_fault == 0):
                     return (2, "CRIT - sfp Rx power too HIGH !!!" + infotext, perfdata)
 
                 if (rx < crit or rx == "" or rx == 0) and (crit != 0):
@@ -88,6 +94,8 @@ check_info['mikrotik_sfp'] = {
         '8',  # SFP Bias Current
         '9',  # FTP Optical Tx
         '10',  # SFP Oprical Rx
+        '4', # mtxrOpticalTxFault
+        '11', # Vendor
     ]),
     'default_levels_variable': 'mikrotik_sfp_default_levels',
     'group': 'mikrotik_sfp',
