@@ -1,6 +1,6 @@
-{'author': 'Add your name here',
- 'description': 'Please add a description here',
- 'download_url': 'http://example.com/MikroTik_SFP_DOM/',
+{'author': u'Wojciech Repiński',
+ 'description': 'MikroTik - monitoring SFP/SFP+ parameters',
+ 'download_url': 'https://github.com/WojRep/Check_MK-MikroTik_SFP-DOM',
  'files': {'agent_based': [],
            'agents': [],
            'alert_handlers': [],
@@ -16,8 +16,8 @@
            'pnp-templates': [],
            'web': ['plugins/wato/mikrotik_sfp.py']},
  'name': 'MikroTik_SFP_DOM',
- 'title': 'Title of MikroTik_SFP_DOM',
- 'version': '1.0',
+ 'title': 'MikroTik - monitoring SFP/SFP+ parameters',
+ 'version': '2.0.0',
  'version.min_required': '2.0.0p18',
  'version.packaged': '2.0.0p18',
- 'version.usable_until': None}
+ 'version.usable_until': '2.0.999''}
