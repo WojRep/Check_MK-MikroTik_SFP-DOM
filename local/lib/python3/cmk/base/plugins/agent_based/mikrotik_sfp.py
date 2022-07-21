@@ -123,6 +123,9 @@ def check_mikrotik_sfp(item, params, section):
     notice = None
     details = ""
 
+    pprint('#### Check - params ####')
+    pprint(params)
+    pprint('#########################')
     pprint('#### Check - section ####')
     pprint(section)
     pprint('#########################')
@@ -151,8 +154,17 @@ def check_mikrotik_sfp(item, params, section):
                 pprint(f"Unit: {unit}")
                 pprint(f"Value: {value}")
 
+                if do_metric and result and not BATT_OIDs[n].get('alarm'):
+                        yield from check_levels(
+                                    value=value,
+                                    metric_name = param,
+                                    label = name,
+        #                            levels_upper = upper_levels,
+        #                            levels_lower = lower_levels,
+                                    render_func = lambda parameter_data: _render_func(value, unit),
 
-    pass
+    yield Result(state=State.UNKNOWN, summary="No item or data")
+    return
 
 register.snmp_section(
     name='mikrotik_sfp',
