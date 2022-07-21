@@ -48,34 +48,40 @@ def _render_func(value: float, unit: str) -> str:
 
 
 
-factory_settings["mikrotik_sfp_default_levels"] = {
-    'rx': (-15.0, -22.0),
-    'temp': (55.0, 65.0),
-}
+#factory_settings["mikrotik_sfp_default_levels"] = {
+#    'rx': (-15.0, -22.0),
+#    'temp': (55.0, 65.0),
+#}
 
 SNMP_BASE = '.1.3.6.1.4.1.14988.1.1.19.1.1'
 
+SNMP_DETECT = exists('.1.3.6.1.4.1.14988.1.1.19.1.1')
+
+
 OIDs = [
-    {'_': 'oid': OID_END , },
-    {'if_name': 'oid': '2', 'do_metric': False, },  # SFP interface name
-    {'wave_length': 'oid': '5', 'do_metric': False, },  # Wave Length
-    {'temp': 'oid': '6', 'do_metric': True, },  # SFP Temp
-    {'voltage': 'oid': '7', 'do_metric': True, },  # SFP Supply Voltage
-    {'bias': 'oid': '8', 'do_metric': True, },  # SFP Bias Current
-    {'tx_power': 'oid': '9', 'do_metric': True, },  # FTP Optical Tx
-    {'rx_power': 'oid': '10', 'do_metric': True, },  # SFP Oprical Rx
-    {'mtxrOpticalTxFault': 'oid': '4', 'do_metric': False, },  # mtxrOpticalTxFault
-    {'vendor': 'oid': '11', 'do_metric': False, }, # Vendor
+    {'id': '_', 'oid': OIDEnd() , },
+    {'id': 'if_name', 'oid': '2', 'do_metric': False, },  # SFP interface name
+    {'id': 'wave_length', 'oid': '5', 'do_metric': False, },  # Wave Length
+    {'id': 'temp', 'oid': '6', 'do_metric': True, },  # SFP Temp
+    {'id': 'voltage', 'oid': '7', 'do_metric': True, },  # SFP Supply Voltage
+    {'id': 'bias', 'oid': '8', 'do_metric': True, },  # SFP Bias Current
+    {'id': 'tx_power', 'oid': '9', 'do_metric': True, },  # FTP Optical Tx
+    {'id': 'rx_power', 'oid': '10', 'do_metric': True, },  # SFP Oprical Rx
+    {'id': 'mtxrOpticalTxFault', 'oid': '4', 'do_metric': False, },  # mtxrOpticalTxFault
+    {'id': 'vendor', 'oid': '11', 'do_metric': False, }, # Vendor
 ]
 
-parse_mikrotik_sfp(string_table):
+def parse_mikrotik_sfp(string_table):
 
+    pprint('########## string_table ############')
     pprint(string_table)
+    pprint('####################################')
+
     interface_list = []
     for m in range(len(string_table)):
         parameters = string_table[m]
         for n in range(len(parameters)):
-            divider =  BATT_OIDs[n].get('divider') if BATT_OIDs[n].get('divider') else 1
+            divider =  OIDs[n].get('divider') if OIDs[n].get('divider') else 1
             if _isInt(parameters[n]) and divider == 1:
                 value = int(parameters[n])
             elif _isFloat(parameters[n]):
@@ -85,17 +91,34 @@ parse_mikrotik_sfp(string_table):
                 if (value is None) or (value == ''):
                     value = chr(216)
             parameters[n] = value
+        interface_list.append(parameters)
+
+    pprint('#### interface_list ####')
+    pprint(interface_list)
+    pprint('########################')
     return interface_list
 
+def discover_mikrotik_sfp(section):
+    yield Service(item="xx")
 
-SNMP_DETECT = exists(''.1.3.6.1.4.1.14988.1.1.19.1.1')
 
+def check_mikrotik_sfp(item, params, section):
+    if not section:
+        yield Result(state=State.UNKNOWN, summary="No data")
+        return
+
+    state = State.OK
+    summary = None
+    notice = None
+    details = ""
+
+    pass
 
 register.snmp_section(
-    name='mikrotik_sfp'',
+    name='mikrotik_sfp',
     fetch = SNMPTree(
         base = SNMP_BASE,
-        oids = [ oid['oid'] for _, oid in OIDs.items()],
+        oids = [ oid['oid'] for oid in OIDs],
     ),
     detect = SNMP_DETECT,
     parse_function = parse_mikrotik_sfp,
