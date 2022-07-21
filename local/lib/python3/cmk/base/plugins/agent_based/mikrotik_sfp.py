@@ -55,7 +55,12 @@ def _render_func(value: float, unit: str) -> str:
 
 SNMP_BASE = '.1.3.6.1.4.1.14988.1.1.19.1.1'
 
+<<<<<<< HEAD
 SNMP_DETECT = contains('.1.3.6.1.4.1.14988.1.1.19.1.1')
+=======
+#SNMP_DETECT = exists('.1.3.6.1.4.1.14988.1.1.19.1.1')
+SNMP_DETECT = startswith('.1.3.6.1.2.1.1.2.0', '.1.3.6.1.4.1.14988.1')
+>>>>>>> f2709be58f6f1cee2fb7142f0eb595e70835823e
 
 
 OIDs = [
@@ -73,9 +78,9 @@ OIDs = [
 
 def parse_mikrotik_sfp(string_table):
 
-    pprint('########## string_table ############')
-    pprint(string_table)
-    pprint('####################################')
+#    pprint('########## string_table ############')
+#    pprint(string_table)
+#    pprint('####################################')
 
     interface_list = []
     for m in range(len(string_table)):
@@ -93,15 +98,15 @@ def parse_mikrotik_sfp(string_table):
             parameters[n] = value
         interface_list.append(parameters)
 
-    pprint('#### interface_list ####')
-    pprint(interface_list)
-    pprint('########################')
+#    pprint('#### interface_list ####')
+#    pprint(interface_list)
+#    pprint('########################')
     return interface_list
 
 def discover_mikrotik_sfp(section):
-    pprint('#### section ####')
-    pprint(section)
-    pprint('#################')
+#    pprint('#### section ####')
+#    pprint(section)
+#    pprint('#################')
 
     for line in section:
         if len(line) > 0:
@@ -117,6 +122,35 @@ def check_mikrotik_sfp(item, params, section):
     summary = None
     notice = None
     details = ""
+
+    pprint('#### Check - section ####')
+    pprint(section)
+    pprint('#########################')
+
+    for line in section:
+        if line[1] == item:
+            for n in range(len(line)):
+
+                param = OIDs[n].get('id')
+                name = OIDs[n].get('name') if OIDs[n].get('name') else param
+                long_name = OIDs[n].get('long_name') if OIDs[n].get('long_name') else name
+                do_metric = OIDs[n].get('do_metric') if OIDs[n].get('do_metric') else False
+                unit = OIDs[n].get('unit') if OIDs[n].get('unit') else ''
+                value = line[n]
+
+                if (OIDs[n].get('id') == 'vendor'):
+                    vendor = line[n]
+                    if (vendor is None) or (vendor == ""):
+                        vendor = "?"
+
+                pprint("###########################")
+                pprint(f"Param: {param}")
+                pprint(f"Name: {name}")
+                pprint(f"Long name: {long_name}")
+                pprint(f"Do metric: {do_metric}")
+                pprint(f"Unit: {unit}")
+                pprint(f"Value: {value}")
+
 
     pass
 
