@@ -55,7 +55,7 @@ def _render_func(value: float, unit: str) -> str:
 
 SNMP_BASE = '.1.3.6.1.4.1.14988.1.1.19.1.1'
 
-SNMP_DETECT = exists('.1.3.6.1.4.1.14988.1.1.19.1.1')
+SNMP_DETECT = contains('.1.3.6.1.4.1.14988.1.1.19.1.1')
 
 
 OIDs = [
