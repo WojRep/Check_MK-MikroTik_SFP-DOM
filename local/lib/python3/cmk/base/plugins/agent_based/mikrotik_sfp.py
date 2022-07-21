@@ -61,12 +61,12 @@ SNMP_DETECT = exists('.1.3.6.1.4.1.14988.1.1.19.1.1')
 OIDs = [
     {'id': '_', 'oid': OIDEnd() , },
     {'id': 'if_name', 'oid': '2', 'do_metric': False, },  # SFP interface name
-    {'id': 'wave_length', 'oid': '5', 'do_metric': False, },  # Wave Length
-    {'id': 'temp', 'oid': '6', 'do_metric': True, },  # SFP Temp
-    {'id': 'voltage', 'oid': '7', 'do_metric': True, },  # SFP Supply Voltage
-    {'id': 'bias', 'oid': '8', 'do_metric': True, },  # SFP Bias Current
-    {'id': 'tx_power', 'oid': '9', 'do_metric': True, },  # FTP Optical Tx
-    {'id': 'rx_power', 'oid': '10', 'do_metric': True, },  # SFP Oprical Rx
+    {'id': 'wave_length', 'oid': '5', 'do_metric': False, 'unit': 'nm', 'divider': 100, },  # Wave Length
+    {'id': 'temp', 'oid': '6', 'do_metric': True, 'unit': 'c', 'divider': 1000, },  # SFP Temp
+    {'id': 'voltage', 'oid': '7', 'do_metric': True, 'unit': 'v', 'divider': 1000, },  # SFP Supply Voltage
+    {'id': 'bias', 'oid': '8', 'do_metric': True, 'unit': 'a', 'divider': 1000, },  # SFP Bias Current
+    {'id': 'tx_power', 'oid': '9', 'do_metric': True, 'unit': 'dbm', 'divider': 100, },  # FTP Optical Tx
+    {'id': 'rx_power', 'oid': '10', 'do_metric': True, 'unit': 'dbm', 'divider': 100, },  # SFP Oprical Rx
     {'id': 'mtxrOpticalTxFault', 'oid': '4', 'do_metric': False, },  # mtxrOpticalTxFault
     {'id': 'vendor', 'oid': '11', 'do_metric': False, }, # Vendor
 ]
@@ -99,7 +99,13 @@ def parse_mikrotik_sfp(string_table):
     return interface_list
 
 def discover_mikrotik_sfp(section):
-    yield Service(item="xx")
+    pprint('#### section ####')
+    pprint(section)
+    pprint('#################')
+
+    for line in section:
+        if len(line) > 0:
+            yield Service(item=line[1])
 
 
 def check_mikrotik_sfp(item, params, section):
