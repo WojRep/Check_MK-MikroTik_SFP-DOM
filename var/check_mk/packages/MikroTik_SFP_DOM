@@ -17,7 +17,7 @@
            'web': ['plugins/wato/mikrotik_sfp.py', 'plugins/metrics/mikrotik_sfp.py', 'plugins/perfometer/mikrotik_sfp.py'],},
  'name': 'MikroTik_SFP_DOM',
  'title': 'MikroTik - monitoring DOM SFP/SFP+ parameters',
- 'version': '2.0.4',
- 'version.min_required': '2.0.0p18',
- 'version.packaged': '2.0.0p26',
- 'version.usable_until': None}
+ 'version': '2.1.5',
+ 'version.min_required': '2.1.0p18',
+ 'version.packaged': '2.1.0p40',
+ 'version.usable_until': 2.1.9999}
